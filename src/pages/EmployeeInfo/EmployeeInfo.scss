@@ -1,0 +1,49 @@
+.wrapper {
+  height: 100vh;
+  width: 100vw;
+  background-color: #f6f6f6;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  padding-top: 72px;
+  div {
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 24px;
+  }
+  & > div {
+    margin-right: 75px;
+  }
+  .underline {
+    margin: 0 auto;
+    width: 185px;
+    height: 0px;
+    margin-top: 10px;
+    border: 2px solid #000000;
+  }
+}
+.goback {
+  position: absolute;
+  width: 53px;
+  height: 53px;
+  left: 70px;
+  top: 53px;
+  background-image: url('../../assets/goback.png');
+}
+section {
+  max-width: 1225px;
+  margin: 0 auto;
+  margin-top: 20px;
+  padding: 80px 150px 0px 150px;
+  background-color: white;
+}
+.fullName {
+  display: flex;
+  justify-content: space-between;
+}
+.btn_container {
+  display: flex;
+  justify-content: flex-end;
+}

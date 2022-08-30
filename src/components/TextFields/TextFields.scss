@@ -1,0 +1,49 @@
+.textField {
+  width: 455px;
+  padding: 2px 24px 0 24px;
+  div {
+    font-family: 'Helvetica Neue';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 21px;
+    color: black;
+  }
+  input {
+    height: 60px;
+    width: 100%;
+    border: 1.8px solid #8ac0e2;
+    border-radius: 8px;
+    outline: none;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 21px;
+    font-family: 'Helvetica Neue';
+    &:active,
+    &:focus {
+      background: rgba(43, 75, 242, 0.06);
+      border: 1.8px solid #6499ff;
+    }
+  }
+  p {
+    font-weight: 300;
+    font-size: 14px;
+  }
+}
+.error {
+  input {
+    border: 1.8px solid #e52f2f;
+    &:active,
+    &:focus {
+      background: white;
+      border: 1.8px solid #e52f2f;
+    }
+  }
+  div {
+    color: #e52f2f;
+  }
+  p {
+    color: #e52f2f;
+  }
+}
