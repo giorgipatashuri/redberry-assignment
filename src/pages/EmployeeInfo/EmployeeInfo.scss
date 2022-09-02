@@ -1,6 +1,4 @@
 .wrapper {
-  height: 100vh;
-  width: 100vw;
   background-color: #f6f6f6;
 }
 
@@ -42,8 +40,19 @@ section {
 .fullName {
   display: flex;
   justify-content: space-between;
+  gap: 50px;
 }
 .btn_container {
   display: flex;
   justify-content: flex-end;
+}
+.option {
+  :hover {
+    box-shadow: 0 0 10px 100px #1882a8 inset;
+  }
+}
+.secondLogo {
+  display: block;
+  margin: 0 auto;
+  margin-top: 75px;
 }

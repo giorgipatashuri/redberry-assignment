@@ -1,6 +1,5 @@
 .textField {
   width: 455px;
-  padding: 2px 24px 0 24px;
   div {
     font-family: 'Helvetica Neue';
     font-style: normal;
@@ -31,7 +30,7 @@
     font-size: 14px;
   }
 }
-.error {
+.fieldError {
   input {
     border: 1.8px solid #e52f2f;
     &:active,
@@ -45,5 +44,11 @@
   }
   p {
     color: #e52f2f;
+  }
+}
+.inputcontianer {
+  position: relative;
+  svg {
+    position: absolute;
   }
 }

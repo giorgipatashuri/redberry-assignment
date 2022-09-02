@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import arrowDown from '../../assets/arrowdown.svg';
 import './Select.scss';
-const DropDown = ({ name = '', data, onClick, ...props }) => {
+const DropDown = ({ name = '', data, onClick, error, ...props }) => {
   const [isVisible, setisVisible] = useState(false);
   return (
-    <div {...props} className='select_container' onClick={() => setisVisible(!isVisible)}>
+    <div
+      {...props}
+      className={`select_container ${error && 'error'}`}
+      onClick={() => setisVisible(!isVisible)}>
       <div className='select_name'>
         {name}
         <img src={arrowDown} alt='arrow-down' />

@@ -5,28 +5,42 @@ import { Controller } from 'react-hook-form';
 import TextFields from '../../components/TextFields/TextFields';
 import Select from '../../components/Select/Select';
 import Button from '../../components/Button/Button';
+import SecondLogo from '../../assets/secondLogo.png';
 import './EmployeeInfo.scss';
 
 const getFormValues = () => {
-  const Formvalues = sessionStorage.getItem('test');
-  if (!Formvalues) {
+  const formValues = sessionStorage.getItem('UserData');
+  if (!formValues) {
     return {
       name: '',
       surname: '',
       mail: '',
       number: '',
+      team_id: '',
     };
   }
-  return JSON.parse(Formvalues);
+  return JSON.parse(formValues);
+};
+const getSelectValues = () => {
+  const selectValues = sessionStorage.getItem('UserSelect');
+  if (!selectValues) {
+    return {
+      team: {},
+
+      position: {},
+    };
+  }
+  return JSON.parse(selectValues);
 };
 
 const EmployeeInfo = () => {
   const [teams, setTeams] = useState({});
   const [positions, setPositions] = useState([]);
   const [data, setData] = useState(getFormValues);
-  const [activeSelect, setActiveSelect] = useState({
-    team: {},
-    position: {},
+  const [activeSelect, setActiveSelect] = useState(getSelectValues);
+  const [selectErrors, setSelectErrors] = useState({
+    teamError: false,
+    positionError: false,
   });
   const { register, handleSubmit, control } = useForm();
   useEffect(() => {
@@ -38,14 +52,16 @@ const EmployeeInfo = () => {
       .then(({ data }) => setPositions(data.data));
   }, []);
   useEffect(() => {
-    console.log(data);
-    sessionStorage.setItem('test', JSON.stringify(data));
-  }, [data]);
+    sessionStorage.setItem('UserData', JSON.stringify(data));
+    sessionStorage.setItem('UserSelect', JSON.stringify(activeSelect));
+  }, [data, activeSelect]);
   const activeTeamSelect = (opt) => {
     setActiveSelect((prevstate) => ({
+      ...prevstate,
       position: {},
       team: opt,
     }));
+    console.log(opt);
   };
   const activePositionSelect = (opt) => {
     setActiveSelect((prevstate) => ({
@@ -53,7 +69,6 @@ const EmployeeInfo = () => {
       position: opt,
     }));
   };
-  console.log(positions);
   const filterPositionsByteams = positions.filter((pos) => activeSelect.team.id === pos.team_id);
   const handleChange = (e) => {
     setData((prevstate) => ({
@@ -61,8 +76,39 @@ const EmployeeInfo = () => {
       [e.target.name]: e.target.value,
     }));
   };
-  const onSubmit = (data) => {
-    console.log(data);
+  const onClickSelectCheck = () => {
+    if (
+      Object.keys(activeSelect.team).length == 0 &&
+      Object.keys(activeSelect.position).length == 0
+    ) {
+      return setSelectErrors((prevstate) => ({
+        ...prevstate,
+        teamError: true,
+        positionError: true,
+      }));
+    }
+    if (Object.keys(activeSelect.team).length == 0) {
+      return setSelectErrors((prevstate) => ({
+        ...prevstate,
+        teamError: true,
+      }));
+    }
+    if (Object.keys(activeSelect.position).length == 0) {
+      return setSelectErrors((prevstate) => ({
+        ...prevstate,
+        positionError: true,
+      }));
+    } else {
+      return setSelectErrors((prevstate) => ({
+        ...prevstate,
+        teamError: false,
+        positionError: false,
+      }));
+    }
+    console.log('test');
+  };
+  const onSuccesSubmit = (data) => {
+    console.log('success');
   };
   return (
     <div className='wrapper'>
@@ -75,12 +121,13 @@ const EmployeeInfo = () => {
         <div>ლეპტოპის მახასიათებლები</div>
       </div>
       <section>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSuccesSubmit)}>
           <div className='fullName'>
             <Controller
               control={control}
+              defaultValue={data.name}
               name='name'
-              rules={{ required: true }}
+              rules={{ required: true, minLength: 2, pattern: { value: /^[ა-ჰ]+$/i } }}
               render={({ field, fieldState: { error } }) => (
                 <TextFields
                   name='სახელი'
@@ -90,15 +137,16 @@ const EmployeeInfo = () => {
                     field.onChange(e);
                     handleChange(e);
                   }}
-                  error={error}
+                  isError={error}
                   requirements='მინიმუმ 2 სიმბოლო, ქართული ასოები'
                 />
               )}
             />
             <Controller
               control={control}
+              defaultValue={data.surname}
               name='surname'
-              rules={{ required: true }}
+              rules={{ required: true, minLength: 2, pattern: { value: /^[ა-ჰ]+$/i } }}
               render={({ field, fieldState: { error } }) => (
                 <TextFields
                   name='გვარი'
@@ -107,9 +155,9 @@ const EmployeeInfo = () => {
                     field.onChange(e);
                     handleChange(e);
                   }}
-                  value={field.surname}
+                  value={data.surname}
                   requirements='მინიმუმ 2 სიმბოლო, ქართული ასოები'
-                  error={error}
+                  isError={error}
                 />
               )}
             />
@@ -119,36 +167,44 @@ const EmployeeInfo = () => {
             name={activeSelect.team.name ? activeSelect.team.name : 'თიმი'}
             data={teams}
             onClick={activeTeamSelect}
+            error={selectErrors.teamError}
           />
           <Select
             style={{ marginTop: '35px' }}
             name={activeSelect.position.name ? activeSelect.position.name : 'პოზიციები'}
             data={filterPositionsByteams}
             onClick={activePositionSelect}
+            error={selectErrors.positionError}
           />
           <Controller
             control={control}
-            name='number'
-            rules={{ required: true }}
+            name='mail'
+            rules={{
+              required: true,
+              pattern: {
+                value:
+                  /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@redberry.ge$/,
+              },
+            }}
             render={({ field, fieldState: { error } }) => (
               <TextFields
-                name='number'
-                inputName='number'
+                name='მეილი'
+                inputName='mail'
                 onChange={(e) => {
                   field.onChange(e);
                   handleChange(e);
                 }}
                 value={field.value}
-                requirements='მინიმუმ 2 სიმბოლო, ქართული ასოები'
+                requirements='უნდა მთავრდებოდეს @redberry.ge-თი'
                 style={{ width: '100%', marginTop: '35px' }}
-                error={error}
+                isError={error}
               />
             )}
           />
           <Controller
             control={control}
-            name='mail'
-            rules={{ required: true }}
+            name='number'
+            rules={{ required: true, pattern: { value: /\+(995)\d{3}\d{3}\d{3}$/ } }}
             render={({ field, fieldState: { error } }) => (
               <TextFields
                 name='ტელეფონის ნომერი'
@@ -160,16 +216,21 @@ const EmployeeInfo = () => {
                 value={field.value}
                 requirements='უნდა აკმაყოფილებდეს ქართული მობ-ნომრის ფორმატს'
                 style={{ width: '100%', marginTop: '35px' }}
-                error={error}
+                isError={error}
               />
             )}
           />
 
           <div className='btn_container'>
-            <Button style={{ width: '175px', marginTop: '35px', float: 'right' }}>test</Button>
+            <Button
+              onClick={() => onClickSelectCheck()}
+              style={{ width: '175px', marginTop: '85px' }}>
+              test
+            </Button>
           </div>
         </form>
       </section>
+      <img src={SecondLogo} alt='logo' className='secondLogo' />
     </div>
   );
 };
