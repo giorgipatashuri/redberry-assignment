@@ -1,0 +1,19 @@
+.imageUploader {
+  border: 0.2rem dashed #4386a9;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 425px;
+}
+.choosenImage {
+  height: 425px;
+  width: 100%;
+}
+.imgContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 25px;
+}
