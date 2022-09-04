@@ -1,5 +1,6 @@
 .imageUploader {
   border: 0.2rem dashed #4386a9;
+  background-color: #f6f6f6;
   border-radius: 18px;
   display: flex;
   flex-direction: column;
@@ -16,4 +17,73 @@
   justify-content: space-between;
   align-items: center;
   margin-top: 25px;
+}
+.leptopName {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 50px;
+  gap: 62px;
+}
+.line {
+  width: 100%;
+  margin-top: 40px;
+  border: 1px solid #c7c7c7;
+}
+.leptopCpu {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 50px;
+  gap: 62px;
+}
+.leptopMemory {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  margin-top: 50px;
+  gap: 62px;
+}
+.radioBox {
+  height: 100px;
+  gap: 6rem;
+}
+.radioOptions {
+  display: flex;
+  margin-top: 20px;
+}
+.radioWrapper {
+  margin-right: 1.8rem;
+}
+.radioWrapper input {
+  width: 2rem;
+  margin-right: 1.8rem;
+}
+.leptopState {
+  display: flex;
+  margin-top: 50px;
+  justify-content: space-between;
+  gap: 50px;
+}
+.stateRadioBox {
+  margin-top: 50px;
+  height: 100px;
+  gap: 6rem;
+}
+.leptopPage-btn_container {
+  height: 100px;
+  margin-top: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.fileUpdateError {
+  border: 0.2rem dashed #e52f2f;
+  background-color: rgba($color: #e52f2f, $alpha: 0.1);
+}
+.radioBoxError {
+  .radioName {
+    color: #e52f2f;
+  }
 }

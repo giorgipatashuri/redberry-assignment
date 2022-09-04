@@ -1,37 +1,98 @@
-import React, { useState } from 'react';
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import { useRef } from 'react';
+import { useForm } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import Button from '../../components/Button/Button';
 import Layout from '../../components/Layout/Layout';
+import Select from '../../components/Select/Select';
+import TextFields from '../../components/TextFields/TextFields';
 import './LeptopInfo.scss';
+const getFormValues = () => {
+  const formValues = sessionStorage.getItem('LeptopData');
+  if (!formValues) {
+    return {
+      laptop_name: '',
+      laptop_cpu_cores: '',
+      laptop_cpu_threads: '',
+      laptop_hard_drive_type: '',
+      laptop_ram: '',
+      laptop_purchase_date: '',
+      laptop_price: '',
+      laptop_state: '',
+    };
+  }
+  return JSON.parse(formValues);
+};
+const getSelectValues = () => {
+  const selectValues = sessionStorage.getItem('LeptopSelect');
+  if (!selectValues) {
+    return {
+      cpu: {},
+
+      brand: {},
+    };
+  }
+  return JSON.parse(selectValues);
+};
 const LeptopInfo = () => {
   const [imgLink, setImgLink] = useState('');
   const [imgData, setImgData] = useState({
     name: '',
     size: 0,
+    error: false,
   });
-  const [drag, setDrag] = useState(false);
+  const [data, setData] = useState(getFormValues);
+  const [cpus, setCpus] = useState([]);
+  const [brands, setBrands] = useState([]);
+  const [activeSelect, setActiveSelect] = useState(getSelectValues);
+  const [selectErrors, setSelectErrors] = useState({
+    cpuError: false,
+    brandError: false,
+  });
+  const [radioErrors, setRadioErrors] = useState({
+    memoryError: false,
+    stateError: false,
+  });
   const inputFileRef = useRef(null);
-  const imageHandler = (e) => {
-    const test = URL.createObjectURL(e.target.files[0]);
-    const formData = new FormData();
-
-    formData.append('img', e.target.files[0]);
-    setImgLink(test);
-    // console.log(str_arr[str_arr.length - 1]);
-    console.log('img', formData);
+  const { register, handleSubmit, control } = useForm();
+  useEffect(() => {
+    axios.get(`https://pcfy.redberryinternship.ge/api/cpus`).then(({ data }) => setCpus(data.data));
+    axios
+      .get(`https://pcfy.redberryinternship.ge/api/brands`)
+      .then(({ data }) => setBrands(data.data));
+  }, []);
+  useEffect(() => {
+    sessionStorage.setItem('LeptopSelect', JSON.stringify(activeSelect));
+    sessionStorage.setItem('LeptopData', JSON.stringify(data));
+  }, [data, activeSelect]);
+  const handleChange = (e) => {
+    setData((prevstate) => ({
+      ...prevstate,
+      [e.target.name]: e.target.value,
+    }));
   };
-  const dragStart = (e) => {
-    e.preventDefault();
-    setDrag(true);
+  const activeCpuSelect = (opt) => {
+    setActiveSelect((prevstate) => ({
+      ...prevstate,
+      cpu: opt,
+    }));
   };
-  const dragLeave = (e) => {
-    e.preventDefault();
-    setDrag(false);
+  const activeBrandSelect = (opt) => {
+    setActiveSelect((prevstate) => ({
+      ...prevstate,
+      brand: opt,
+    }));
   };
   const onDropHandler = (e) => {
     e.preventDefault();
     const imgUrl = URL.createObjectURL(e.dataTransfer.files[0]);
     setImgLink(imgUrl);
+    setImgData({
+      name: e.dataTransfer.files[0].name,
+      size: Math.round(e.dataTransfer.files[0].size / 1024),
+    });
+    console.log(e.dataTransfer.files[0].size);
   };
 
   const handleChangeFile = (e) => {
@@ -39,32 +100,299 @@ const LeptopInfo = () => {
     setImgLink(imgUrl);
     setImgData({
       name: e.target.files[0].name,
-      size: e.target.files[0].size / 1024,
+      size: Math.round(e.target.files[0].size / 1024),
     });
     console.log(e.target.files[0]);
   };
+  const onClickCheck = () => {
+    let isError = false;
+    if (!imgData.name) {
+      setImgData((prevstate) => ({
+        ...prevstate,
+        error: true,
+      }));
+      isError = true;
+    }
+    if (Object.keys(activeSelect.cpu).length == 0 && Object.keys(activeSelect.brand).length == 0) {
+      setSelectErrors((prevstate) => ({
+        ...prevstate,
+        cpuError: true,
+        brandError: true,
+      }));
+      isError = true;
+    }
+    if (Object.keys(activeSelect.cpu).length == 0) {
+      setSelectErrors((prevstate) => ({
+        ...prevstate,
+        cpuError: true,
+      }));
+      isError = true;
+    }
+    if (Object.keys(activeSelect.brand).length == 0) {
+      setSelectErrors((prevstate) => ({
+        ...prevstate,
+        brandError: true,
+      }));
+      isError = true;
+    }
+    if (!data.laptop_hard_drive_type && !data.laptop_state) {
+      setRadioErrors({
+        memoryError: true,
+        stateError: true,
+      });
+      isError = true;
+    }
+    if (!data.laptop_hard_drive_type) {
+      setRadioErrors((prevstate) => ({
+        memoryError: true,
+      }));
+      isError = true;
+    }
+    if (!data.laptop_state) {
+      setRadioErrors((prevstate) => ({
+        stateError: true,
+      }));
+      isError = true;
+    } else {
+      setSelectErrors((prevstate) => ({
+        ...prevstate,
+        cpuError: false,
+        brandError: false,
+      }));
+      isError = false;
+    }
+    console.log(isError);
+    return isError;
+  };
+  const onSuccesSubmit = () => {
+    console.log('test');
+    const fd = new FormData();
+    Object.keys(data).forEach((key) => fd.append(key, data[key]));
+    console.log(fd.get('laptop_name'));
+  };
   return (
     <Layout>
-      <input ref={inputFileRef} type='file' onChange={handleChangeFile} hidden />
-      {imgLink ? (
-        <>
-          <img src={imgLink} alt='img' className='choosenImage' />
-          <div className='imgContent'>
-            <span>name</span>
+      <form onSubmit={handleSubmit(onSuccesSubmit)}>
+        <input ref={inputFileRef} type='file' onChange={handleChangeFile} hidden />
+        {imgLink ? (
+          <>
+            <img src={imgLink} alt='img' className='choosenImage' />
+            <div className='imgContent'>
+              <span>
+                {imgData.name} {imgData.size}mb
+              </span>
+              <Button onClick={() => inputFileRef.current.click()}>ატვირთე</Button>
+            </div>
+          </>
+        ) : (
+          <div
+            className={`imageUploader ${imgData.error ? 'fileUpdateError' : ''}`}
+            onDrop={(e) => onDropHandler(e)}>
+            <span>ჩააგდე ან ატვირთე ლეპტოპის ფოტო</span>
             <Button onClick={() => inputFileRef.current.click()}>ატვირთე</Button>
           </div>
-        </>
-      ) : (
-        <div
-          className='imageUploader'
-          onDragStart={(e) => dragStart(e)}
-          onDragLeave={(e) => dragLeave(e)}
-          onDragOver={(e) => dragStart(e)}
-          onDrop={(e) => onDropHandler(e)}>
-          <span>ჩააგდე ან ატვირთე ლეპტოპის ფოტო</span>
-          <Button onClick={() => inputFileRef.current.click()}>ატვირთე</Button>
+        )}
+        <div className='leptopName'>
+          <Controller
+            control={control}
+            defaultValue={data.laptop_name}
+            name='laptop_name'
+            rules={{ required: true, pattern: { value: /^[a-zA-Z0-9$@$!%*?&#()^-_. +=]+$/ } }}
+            render={({ field, fieldState: { error } }) => (
+              <TextFields
+                style={{ minWidth: '420px' }}
+                name='ლეპტოპის სახელი'
+                inputName='laptop_name'
+                value={data.laptop_name}
+                onChange={(e) => {
+                  field.onChange(e);
+                  handleChange(e);
+                }}
+                isError={error}
+                requirements='ლათინური ასოები, ციფრები, !@#$%^&*()_+= '
+              />
+            )}
+          />
+          <Select
+            style={{ width: '60%' }}
+            name={activeSelect.brand.name ? activeSelect.brand.name : 'brand'}
+            data={brands}
+            onClick={activeBrandSelect}
+            error={selectErrors.brandError}
+          />
         </div>
-      )}
+
+        <div className='line'></div>
+        <div className='leptopCpu'>
+          <Select
+            style={{ width: '300px' }}
+            name={activeSelect.cpu.name ? activeSelect.cpu.name : 'CPU'}
+            data={cpus}
+            onClick={activeCpuSelect}
+            error={selectErrors.cpuError}
+          />
+          <Controller
+            control={control}
+            defaultValue={data.laptop_cpu_cores}
+            name='laptop_cpu_cores'
+            rules={{ required: true, pattern: { value: /^\d+$/ } }}
+            render={({ field, fieldState: { error } }) => (
+              <TextFields
+                // style={{ minWidth: '420px' }}
+                name='ლეპტოპის ბირთვები'
+                inputName='laptop_cpu_cores'
+                value={data.laptop_cpu_cores}
+                onChange={(e) => {
+                  field.onChange(e);
+                  handleChange(e);
+                }}
+                isError={error}
+                requirements='მხოლოდ ციფრები'
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            defaultValue={data.laptop_cpu_threads}
+            name='laptop_cpu_threads'
+            rules={{ required: true, pattern: { value: /^\d+$/ } }}
+            render={({ field, fieldState: { error } }) => (
+              <TextFields
+                // style={{ minWidth: '420px' }}
+                name='ლეპტოპის ნაკადი'
+                inputName='laptop_cpu_threads'
+                value={data.laptop_cpu_threads}
+                onChange={(e) => {
+                  field.onChange(e);
+                  handleChange(e);
+                }}
+                isError={error}
+                requirements='მხოლოდ ციფრები'
+              />
+            )}
+          />
+        </div>
+        <div className='leptopMemory'>
+          <Controller
+            control={control}
+            defaultValue={data.laptop_ram}
+            name='laptop_ram'
+            rules={{ required: true, pattern: { value: /^\d+$/ } }}
+            render={({ field, fieldState: { error } }) => (
+              <TextFields
+                name='ლეპტოპის RAM(GB)'
+                inputName='laptop_ram'
+                value={data.laptop_ram}
+                onChange={(e) => {
+                  field.onChange(e);
+                  handleChange(e);
+                }}
+                isError={error}
+                requirements='მხოლოდ ციფრები'
+              />
+            )}
+          />
+
+          <div className={`radioBox ${radioErrors.memoryError ? 'radioBoxError' : ''}`}>
+            <div className='radioName'>მეხსიერების ტიპი</div>
+            <div className='radioOptions'>
+              <div className={`radioWrapper`}>
+                <input
+                  name='laptop_hard_drive_type'
+                  type='radio'
+                  value='SSD'
+                  onChange={handleChange}
+                  checked={data.laptop_hard_drive_type === 'SSD'}
+                />
+                <label>SSD</label>
+              </div>
+              <div className={`radioWrapper`}>
+                <input
+                  name='laptop_hard_drive_type'
+                  type='radio'
+                  value='HDD'
+                  onChange={handleChange}
+                  checked={data.laptop_hard_drive_type === 'HDD'}
+                />
+                <label>HDD</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className='line'></div>
+        <div className='leptopState'>
+          <Controller
+            control={control}
+            defaultValue={data.laptop_purchase_date}
+            name='laptop_purchase_date'
+            rules={{ required: true }}
+            render={({ field, fieldState: { error } }) => (
+              <TextFields
+                type='date'
+                name='შეძენის რიცხვი (არჩევითი)'
+                inputName='laptop_purchase_date'
+                value={data.laptop_purchase_date}
+                onChange={(e) => {
+                  field.onChange(e);
+                  handleChange(e);
+                }}
+                isError={error}
+                requirements=''
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            defaultValue={data.laptop_price}
+            name='laptop_price'
+            rules={{ required: true, pattern: { value: /^\d+$/ } }}
+            render={({ field, fieldState: { error } }) => (
+              <TextFields
+                name='ლეპტოპის ფასი'
+                inputName='laptop_price'
+                onChange={(e) => {
+                  field.onChange(e);
+                  handleChange(e);
+                }}
+                value={data.laptop_price}
+                requirements='მხოლოდ ციფრები'
+                isError={error}
+              />
+            )}
+          />
+        </div>
+        <div className={`stateRadioBox ${radioErrors.memoryError ? 'radioBoxError' : ''}`}>
+          <div>ლეპტოპის მდგომარეობა</div>
+          <div className='radioOptions'>
+            <div className={`radioWrapper`}>
+              <input
+                name='laptop_state'
+                type='radio'
+                value='new'
+                onChange={handleChange}
+                checked={data.laptop_state === 'new'}
+              />
+              <label>ახალი</label>
+            </div>
+            <div className={`radioWrapper`}>
+              <input
+                name='laptop_state'
+                type='radio'
+                value='used'
+                onChange={handleChange}
+                checked={data.laptop_state === 'used'}
+              />
+              <label>მეორადი</label>
+            </div>
+          </div>
+        </div>
+        <div className='leptopPage-btn_container'>
+          <div>უკან</div>
+          <Button onClick={() => onClickCheck()} style={{ width: '175px' }}>
+            test
+          </Button>
+        </div>
+      </form>
     </Layout>
   );
 };
