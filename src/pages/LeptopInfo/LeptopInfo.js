@@ -1,8 +1,10 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import { useContext } from 'react';
 import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
+import { formDataContext } from '../../Context';
 import Button from '../../components/Button/Button';
 import Layout from '../../components/Layout/Layout';
 import Select from '../../components/Select/Select';
@@ -29,7 +31,6 @@ const getSelectValues = () => {
   if (!selectValues) {
     return {
       cpu: {},
-
       brand: {},
     };
   }
@@ -38,6 +39,7 @@ const getSelectValues = () => {
 const LeptopInfo = () => {
   const [imgLink, setImgLink] = useState('');
   const [imgData, setImgData] = useState({
+    img,
     name: '',
     size: 0,
     error: false,
@@ -56,6 +58,7 @@ const LeptopInfo = () => {
   });
   const inputFileRef = useRef(null);
   const { register, handleSubmit, control } = useForm();
+  const { formData } = useContext(formDataContext);
   useEffect(() => {
     axios.get(`https://pcfy.redberryinternship.ge/api/cpus`).then(({ data }) => setCpus(data.data));
     axios
@@ -89,6 +92,7 @@ const LeptopInfo = () => {
     const imgUrl = URL.createObjectURL(e.dataTransfer.files[0]);
     setImgLink(imgUrl);
     setImgData({
+      img: e.dataTransfer.files[0],
       name: e.dataTransfer.files[0].name,
       size: Math.round(e.dataTransfer.files[0].size / 1024),
     });
@@ -99,6 +103,7 @@ const LeptopInfo = () => {
     const imgUrl = URL.createObjectURL(e.target.files[0]);
     setImgLink(imgUrl);
     setImgData({
+      img: e.target.files[0],
       name: e.target.files[0].name,
       size: Math.round(e.target.files[0].size / 1024),
     });
@@ -165,7 +170,8 @@ const LeptopInfo = () => {
     return isError;
   };
   const onSuccesSubmit = () => {
-    console.log('test');
+    if (!onClickCheck) return;
+    const sendData = { ...formData, ...data, laptop_image: imgData.img };
     const fd = new FormData();
     Object.keys(data).forEach((key) => fd.append(key, data[key]));
     console.log(fd.get('laptop_name'));

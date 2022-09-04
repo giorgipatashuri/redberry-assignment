@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
+import { formDataContext } from '../../Context';
 import TextFields from '../../components/TextFields/TextFields';
 import Select from '../../components/Select/Select';
 import Button from '../../components/Button/Button';
@@ -43,7 +44,9 @@ const EmployeeInfo = () => {
     teamError: false,
     positionError: false,
   });
+  const [postData, setPostData] = useState({});
   const { register, handleSubmit, control } = useForm();
+  const { setFormData } = useContext(formDataContext);
   useEffect(() => {
     axios
       .get(`https://pcfy.redberryinternship.ge/api/teams`)
@@ -115,10 +118,14 @@ const EmployeeInfo = () => {
       return true;
     }
   };
-  const onSuccesSubmit = (data) => {
+  const onSuccesSubmit = () => {
     if (!onClickSelectCheck()) return;
-
-    console.log('test');
+    setPostData({
+      ...data,
+      team_id: activeSelect.position.team_id,
+      position_id: activeSelect.position.id,
+    });
+    setFormData(data);
   };
   return (
     <Layout>
