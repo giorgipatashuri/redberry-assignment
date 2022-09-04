@@ -3,12 +3,14 @@ import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
 import { formDataContext } from '../../Context';
+
 import TextFields from '../../components/TextFields/TextFields';
 import Select from '../../components/Select/Select';
 import Button from '../../components/Button/Button';
 
 import './EmployeeInfo.scss';
 import Layout from '../../components/Layout/Layout';
+import { useNavigate } from 'react-router-dom';
 
 const getFormValues = () => {
   const formValues = sessionStorage.getItem('UserData');
@@ -16,9 +18,10 @@ const getFormValues = () => {
     return {
       name: '',
       surname: '',
-      mail: '',
-      number: '',
+      email: '',
+      phone_number: '',
       team_id: '',
+      position_id: '',
     };
   }
   return JSON.parse(formValues);
@@ -46,6 +49,7 @@ const EmployeeInfo = () => {
   });
   const [postData, setPostData] = useState({});
   const { register, handleSubmit, control } = useForm();
+  const navigate = useNavigate();
   const { setFormData } = useContext(formDataContext);
   useEffect(() => {
     axios
@@ -120,12 +124,13 @@ const EmployeeInfo = () => {
   };
   const onSuccesSubmit = () => {
     if (!onClickSelectCheck()) return;
-    setPostData({
+    setData({
       ...data,
       team_id: activeSelect.position.team_id,
       position_id: activeSelect.position.id,
     });
     setFormData(data);
+    navigate('/leptopInfo');
   };
   return (
     <Layout>
@@ -186,8 +191,8 @@ const EmployeeInfo = () => {
         />
         <Controller
           control={control}
-          name='mail'
-          defaultValue={data.mail}
+          name='email'
+          defaultValue={data.email}
           rules={{
             required: true,
             pattern: {
@@ -197,7 +202,7 @@ const EmployeeInfo = () => {
           render={({ field, fieldState: { error } }) => (
             <TextFields
               name='მეილი'
-              inputName='mail'
+              inputName='email'
               onChange={(e) => {
                 field.onChange(e);
                 handleChange(e);
@@ -211,13 +216,13 @@ const EmployeeInfo = () => {
         />
         <Controller
           control={control}
-          defaultValue={data.number}
-          name='number'
+          defaultValue={data.phone_number}
+          name='phone_number'
           rules={{ required: true, pattern: { value: /\+(995)\d{3}\d{3}\d{3}$/ } }}
           render={({ field, fieldState: { error } }) => (
             <TextFields
               name='ტელეფონის ნომერი'
-              inputName='number'
+              inputName='phone_number'
               onChange={(e) => {
                 field.onChange(e);
                 handleChange(e);
@@ -232,9 +237,11 @@ const EmployeeInfo = () => {
 
         <div className='btn_container'>
           <Button
-            onClick={() => onClickSelectCheck()}
-            style={{ width: '175px', marginTop: '85px' }}>
-            test
+            onClick={() => {
+              onClickSelectCheck();
+            }}
+            style={{ width: '175px', marginTop: '85px', marginBottom: '20px' }}>
+            შემდეგი
           </Button>
         </div>
       </form>

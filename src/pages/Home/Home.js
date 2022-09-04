@@ -1,9 +1,11 @@
 import React from 'react';
 import Button from '../../components/Button/Button';
-import './Home.scss';
+import { Link, useNavigate } from 'react-router-dom';
 import mainImg from '../../assets/meinredberry.png';
 import logo from '../../assets/logo.png';
+import './Home.scss';
 const Home = () => {
+  let navigate = useNavigate();
   return (
     <div className='container'>
       <div>
@@ -12,9 +14,8 @@ const Home = () => {
         </div>
         <img src={mainImg} alt='meinredberry' className='meinredberry' />
         <div className='buttons_container'>
-          <button>ჩანაწერის დამატება</button>
-          <Button>test</Button>
-          <button>ჩანაწერების სია</button>
+          <Button onClick={() => navigate('/employeerInfo')}>ჩანაწერის დამატება</Button>
+          <Button>ჩანაწერების სია</Button>
         </div>
       </div>
     </div>

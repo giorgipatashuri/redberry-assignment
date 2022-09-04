@@ -10,6 +10,21 @@ import Layout from '../../components/Layout/Layout';
 import Select from '../../components/Select/Select';
 import TextFields from '../../components/TextFields/TextFields';
 import './LeptopInfo.scss';
+const getFormData = () => {
+  const formValues = sessionStorage.getItem('UserData');
+  if (!formValues) {
+    return {
+      fail: true,
+      name: '',
+      surname: '',
+      email: '',
+      phone_number: '',
+      team_id: '',
+      position_id: '',
+    };
+  }
+  return JSON.parse(formValues);
+};
 const getFormValues = () => {
   const formValues = sessionStorage.getItem('LeptopData');
   if (!formValues) {
@@ -30,7 +45,9 @@ const getSelectValues = () => {
   const selectValues = sessionStorage.getItem('LeptopSelect');
   if (!selectValues) {
     return {
-      cpu: {},
+      laptop_cpu: {
+        name: '',
+      },
       brand: {},
     };
   }
@@ -39,12 +56,13 @@ const getSelectValues = () => {
 const LeptopInfo = () => {
   const [imgLink, setImgLink] = useState('');
   const [imgData, setImgData] = useState({
-    img,
+    img: null,
     name: '',
     size: 0,
     error: false,
   });
   const [data, setData] = useState(getFormValues);
+  const [dataFromEmployeer, setdataFromEmployeer] = useState(getFormData);
   const [cpus, setCpus] = useState([]);
   const [brands, setBrands] = useState([]);
   const [activeSelect, setActiveSelect] = useState(getSelectValues);
@@ -78,7 +96,7 @@ const LeptopInfo = () => {
   const activeCpuSelect = (opt) => {
     setActiveSelect((prevstate) => ({
       ...prevstate,
-      cpu: opt,
+      laptop_cpu: opt,
     }));
   };
   const activeBrandSelect = (opt) => {
@@ -100,6 +118,7 @@ const LeptopInfo = () => {
   };
 
   const handleChangeFile = (e) => {
+    e.preventDefault();
     const imgUrl = URL.createObjectURL(e.target.files[0]);
     setImgLink(imgUrl);
     setImgData({
@@ -117,21 +136,27 @@ const LeptopInfo = () => {
         error: true,
       }));
       isError = true;
+      console.log(isError);
     }
-    if (Object.keys(activeSelect.cpu).length == 0 && Object.keys(activeSelect.brand).length == 0) {
+    if (
+      Object.keys(activeSelect.laptop_cpu).length == 0 &&
+      Object.keys(activeSelect.brand).length == 0
+    ) {
       setSelectErrors((prevstate) => ({
         ...prevstate,
         cpuError: true,
         brandError: true,
       }));
       isError = true;
+      console.log(isError);
     }
-    if (Object.keys(activeSelect.cpu).length == 0) {
+    if (Object.keys(activeSelect.laptop_cpu).length == 0) {
       setSelectErrors((prevstate) => ({
         ...prevstate,
         cpuError: true,
       }));
       isError = true;
+      console.log(isError);
     }
     if (Object.keys(activeSelect.brand).length == 0) {
       setSelectErrors((prevstate) => ({
@@ -139,6 +164,7 @@ const LeptopInfo = () => {
         brandError: true,
       }));
       isError = true;
+      console.log(isError);
     }
     if (!data.laptop_hard_drive_type && !data.laptop_state) {
       setRadioErrors({
@@ -146,15 +172,19 @@ const LeptopInfo = () => {
         stateError: true,
       });
       isError = true;
+      console.log(isError);
     }
     if (!data.laptop_hard_drive_type) {
       setRadioErrors((prevstate) => ({
+        ...prevstate,
         memoryError: true,
       }));
       isError = true;
+      console.log(isError);
     }
     if (!data.laptop_state) {
       setRadioErrors((prevstate) => ({
+        ...prevstate,
         stateError: true,
       }));
       isError = true;
@@ -165,16 +195,39 @@ const LeptopInfo = () => {
         brandError: false,
       }));
       isError = false;
+      console.log(isError);
     }
     console.log(isError);
     return isError;
   };
   const onSuccesSubmit = () => {
     if (!onClickCheck) return;
-    const sendData = { ...formData, ...data, laptop_image: imgData.img };
     const fd = new FormData();
-    Object.keys(data).forEach((key) => fd.append(key, data[key]));
-    console.log(fd.get('laptop_name'));
+    const dataFromStorage = dataFromEmployeer.fail ? formData : dataFromEmployeer;
+    const sendData = {
+      token: '8f329f6dd19fd1905b19a5571745ee88',
+      laptop_brand_id: activeSelect.brand.id,
+      laptop_cpu: activeSelect.laptop_cpu.name,
+      ...dataFromStorage,
+      ...data,
+      laptop_image: imgData.img,
+    };
+    Object.keys(sendData).forEach((key) => fd.append(key, sendData[key]));
+    console.log(fd);
+    axios({
+      method: 'post',
+      url: 'https://pcfy.redberryinternship.ge/api/laptop/create',
+      data: fd,
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+      .then(function (response) {
+        //handle success
+        console.log(response);
+      })
+      .catch(function (response) {
+        //handle error
+        console.log(response);
+      });
   };
   return (
     <Layout>
@@ -195,7 +248,13 @@ const LeptopInfo = () => {
             className={`imageUploader ${imgData.error ? 'fileUpdateError' : ''}`}
             onDrop={(e) => onDropHandler(e)}>
             <span>ჩააგდე ან ატვირთე ლეპტოპის ფოტო</span>
-            <Button onClick={() => inputFileRef.current.click()}>ატვირთე</Button>
+            <Button
+              onClick={(e) => {
+                inputFileRef.current.click();
+                e.preventDefault();
+              }}>
+              ატვირთე
+            </Button>
           </div>
         )}
         <div className='leptopName'>
@@ -232,7 +291,7 @@ const LeptopInfo = () => {
         <div className='leptopCpu'>
           <Select
             style={{ width: '300px' }}
-            name={activeSelect.cpu.name ? activeSelect.cpu.name : 'CPU'}
+            name={activeSelect.laptop_cpu.name ? activeSelect.laptop_cpu.name : 'CPU'}
             data={cpus}
             onClick={activeCpuSelect}
             error={selectErrors.cpuError}
@@ -331,7 +390,6 @@ const LeptopInfo = () => {
             control={control}
             defaultValue={data.laptop_purchase_date}
             name='laptop_purchase_date'
-            rules={{ required: true }}
             render={({ field, fieldState: { error } }) => (
               <TextFields
                 type='date'
@@ -367,8 +425,8 @@ const LeptopInfo = () => {
             )}
           />
         </div>
-        <div className={`stateRadioBox ${radioErrors.memoryError ? 'radioBoxError' : ''}`}>
-          <div>ლეპტოპის მდგომარეობა</div>
+        <div className={`stateRadioBox ${radioErrors.stateError ? 'radioBoxError' : ''}`}>
+          <div className='radioName'>ლეპტოპის მდგომარეობა</div>
           <div className='radioOptions'>
             <div className={`radioWrapper`}>
               <input
@@ -395,7 +453,7 @@ const LeptopInfo = () => {
         <div className='leptopPage-btn_container'>
           <div>უკან</div>
           <Button onClick={() => onClickCheck()} style={{ width: '175px' }}>
-            test
+            დამახსოვრება
           </Button>
         </div>
       </form>
