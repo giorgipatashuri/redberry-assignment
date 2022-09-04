@@ -10,9 +10,12 @@ const Layout = ({ children }) => {
       <div className='header'>
         <div>
           თანამშრომლის ინფო
-          <div className='underline'></div>
+          {window.location.pathname === '/employeerInf' && <div className='underline'></div>}
         </div>
-        <div>ლეპტოპის მახასიათებლები</div>
+        <div>
+          ლეპტოპის მახასიათებლები
+          {window.location.pathname === '/leptopInfo' && <div className='underline'></div>}
+        </div>
       </div>
       <section>{children}</section>
       <img src={SecondLogo} alt='logo' className='secondLogo' />

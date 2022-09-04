@@ -10,6 +10,7 @@ import Layout from '../../components/Layout/Layout';
 import Select from '../../components/Select/Select';
 import TextFields from '../../components/TextFields/TextFields';
 import './LeptopInfo.scss';
+import { Navigate } from 'react-router-dom';
 const getFormData = () => {
   const formValues = sessionStorage.getItem('UserData');
   if (!formValues) {
@@ -221,11 +222,9 @@ const LeptopInfo = () => {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
       .then(function (response) {
-        //handle success
-        console.log(response);
+        Navigate('/Success');
       })
       .catch(function (response) {
-        //handle error
         console.log(response);
       });
   };
