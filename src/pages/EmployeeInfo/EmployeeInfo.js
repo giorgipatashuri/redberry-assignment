@@ -129,7 +129,13 @@ const EmployeeInfo = () => {
       team_id: activeSelect.position.team_id,
       position_id: activeSelect.position.id,
     });
-    setFormData(data);
+    const postdata = {
+      ...data,
+      team_id: activeSelect.position.team_id,
+      position_id: activeSelect.position.id,
+    };
+    sessionStorage.setItem('UserData', JSON.stringify(postdata));
+    setFormData(postdata);
     navigate('/leptopInfo');
   };
   return (

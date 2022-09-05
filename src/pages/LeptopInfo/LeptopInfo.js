@@ -10,7 +10,7 @@ import Layout from '../../components/Layout/Layout';
 import Select from '../../components/Select/Select';
 import TextFields from '../../components/TextFields/TextFields';
 import './LeptopInfo.scss';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 const getFormData = () => {
   const formValues = sessionStorage.getItem('UserData');
   if (!formValues) {
@@ -78,6 +78,7 @@ const LeptopInfo = () => {
   const inputFileRef = useRef(null);
   const { register, handleSubmit, control } = useForm();
   const { formData } = useContext(formDataContext);
+  const navigate = useNavigate();
   useEffect(() => {
     axios.get(`https://pcfy.redberryinternship.ge/api/cpus`).then(({ data }) => setCpus(data.data));
     axios
@@ -115,7 +116,6 @@ const LeptopInfo = () => {
       name: e.dataTransfer.files[0].name,
       size: Math.round(e.dataTransfer.files[0].size / 1024),
     });
-    console.log(e.dataTransfer.files[0].size);
   };
 
   const handleChangeFile = (e) => {
@@ -127,7 +127,6 @@ const LeptopInfo = () => {
       name: e.target.files[0].name,
       size: Math.round(e.target.files[0].size / 1024),
     });
-    console.log(e.target.files[0]);
   };
   const onClickCheck = () => {
     let isError = false;
@@ -137,7 +136,6 @@ const LeptopInfo = () => {
         error: true,
       }));
       isError = true;
-      console.log(isError);
     }
     if (
       Object.keys(activeSelect.laptop_cpu).length == 0 &&
@@ -222,7 +220,7 @@ const LeptopInfo = () => {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
       .then(function (response) {
-        Navigate('/Success');
+        navigate('/Success');
       })
       .catch(function (response) {
         console.log(response);
