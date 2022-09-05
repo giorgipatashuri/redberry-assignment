@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'Helvetica Neue';
+  src: url('../../assets/HelveticaNeue.ttc');
+}
+
 .select_container {
   position: relative;
   width: 100%;
@@ -15,6 +20,10 @@
   -moz-user-select: none;
   -khtml-user-select: none;
   -webkit-user-select: none;
+  font-family: 'Helvetica Neue';
+  font-style: normal;
+  font-weight: bold;
+  font-size: 18px;
 }
 
 .select_option_container {
@@ -28,6 +37,10 @@
 }
 .select_option {
   padding: 10px;
+  font-family: 'Helvetica Neue';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
   background-color: white;
   &:hover {
     background-color: #e7f0f8;

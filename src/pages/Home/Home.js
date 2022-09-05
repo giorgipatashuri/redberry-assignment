@@ -15,7 +15,7 @@ const Home = () => {
         <img src={mainImg} alt='meinredberry' className='meinredberry' />
         <div className='buttons_container'>
           <Button onClick={() => navigate('/employeerInfo')}>ჩანაწერის დამატება</Button>
-          <Button>ჩანაწერების სია</Button>
+          <Button onClick={() => navigate('/List')}>ჩანაწერების სია</Button>
         </div>
       </div>
     </div>

@@ -7,6 +7,12 @@
   justify-content: center;
   align-items: center;
   height: 425px;
+  span {
+    margin-bottom: 30px;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 20px;
+  }
 }
 .choosenImage {
   height: 425px;
@@ -55,6 +61,12 @@
 }
 .radioWrapper {
   margin-right: 1.8rem;
+  label {
+    font-family: 'Helvetica Neue';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+  }
 }
 .radioWrapper input {
   width: 2rem;
@@ -81,9 +93,25 @@
 .fileUpdateError {
   border: 0.2rem dashed #e52f2f;
   background-color: rgba($color: #e52f2f, $alpha: 0.1);
+  span {
+    color: #e52f2f;
+  }
+}
+.radioName {
+  font-family: 'Helvetica Neue';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18px;
 }
 .radioBoxError {
   .radioName {
     color: #e52f2f;
   }
+}
+.back {
+  font-family: 'Helvetica Neue';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18px;
+  color: #62a1eb;
 }

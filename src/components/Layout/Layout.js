@@ -10,7 +10,7 @@ const Layout = ({ children }) => {
       <div className='header'>
         <div>
           თანამშრომლის ინფო
-          {window.location.pathname === '/employeerInf' && <div className='underline'></div>}
+          {window.location.pathname === '/employeerInfo' && <div className='underline'></div>}
         </div>
         <div>
           ლეპტოპის მახასიათებლები

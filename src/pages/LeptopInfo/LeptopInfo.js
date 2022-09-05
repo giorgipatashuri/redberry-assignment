@@ -138,8 +138,8 @@ const LeptopInfo = () => {
       isError = true;
     }
     if (
-      Object.keys(activeSelect.laptop_cpu).length == 0 &&
-      Object.keys(activeSelect.brand).length == 0
+      Object.keys(activeSelect.laptop_cpu).length === 0 &&
+      Object.keys(activeSelect.brand).length === 0
     ) {
       setSelectErrors((prevstate) => ({
         ...prevstate,
@@ -147,7 +147,6 @@ const LeptopInfo = () => {
         brandError: true,
       }));
       isError = true;
-      console.log(isError);
     }
     if (Object.keys(activeSelect.laptop_cpu).length == 0) {
       setSelectErrors((prevstate) => ({
@@ -155,7 +154,6 @@ const LeptopInfo = () => {
         cpuError: true,
       }));
       isError = true;
-      console.log(isError);
     }
     if (Object.keys(activeSelect.brand).length == 0) {
       setSelectErrors((prevstate) => ({
@@ -163,7 +161,18 @@ const LeptopInfo = () => {
         brandError: true,
       }));
       isError = true;
-      console.log(isError);
+    }
+    if (!activeSelect.laptop_cpu.name) {
+      setSelectErrors((prevstate) => ({
+        ...prevstate,
+        cpuError: true,
+      }));
+    }
+    if (!activeSelect.laptop_cpu.name) {
+      setSelectErrors((prevstate) => ({
+        ...prevstate,
+        cpuError: true,
+      }));
     }
     if (!data.laptop_hard_drive_type && !data.laptop_state) {
       setRadioErrors({
@@ -171,7 +180,6 @@ const LeptopInfo = () => {
         stateError: true,
       });
       isError = true;
-      console.log(isError);
     }
     if (!data.laptop_hard_drive_type) {
       setRadioErrors((prevstate) => ({
@@ -179,7 +187,6 @@ const LeptopInfo = () => {
         memoryError: true,
       }));
       isError = true;
-      console.log(isError);
     }
     if (!data.laptop_state) {
       setRadioErrors((prevstate) => ({
@@ -194,9 +201,7 @@ const LeptopInfo = () => {
         brandError: false,
       }));
       isError = false;
-      console.log(isError);
     }
-    console.log(isError);
     return isError;
   };
   const onSuccesSubmit = () => {
@@ -221,6 +226,7 @@ const LeptopInfo = () => {
     })
       .then(function (response) {
         navigate('/Success');
+        sessionStorage.clear();
       })
       .catch(function (response) {
         console.log(response);
@@ -448,7 +454,9 @@ const LeptopInfo = () => {
           </div>
         </div>
         <div className='leptopPage-btn_container'>
-          <div>უკან</div>
+          <div onClick={() => navigate('/employeerInfo')} className='back'>
+            უკან
+          </div>
           <Button onClick={() => onClickCheck()} style={{ width: '175px' }}>
             დამახსოვრება
           </Button>
