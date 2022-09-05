@@ -1,0 +1,60 @@
+@font-face {
+  font-family: 'Helvetica Neue';
+  src: url(../../assets/HelveticaNeue.ttc);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 10px;
+}
+body {
+  max-width: 100vw;
+  height: 100vw;
+}
+.detaildContainer {
+  width: 1200px;
+  gap: 55px;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  margin-top: 100px;
+  padding-bottom: 168px;
+}
+.listTxt {
+  font-size: 2.2rem;
+  color: #2e2e2e;
+  font-weight: 600;
+  font-family: 'Helvetica Neue';
+}
+.quest li {
+  list-style-type: none;
+  margin-bottom: 2.5rem;
+}
+
+.answerTxt {
+  color: #797979;
+  line-height: 2.7rem;
+  font-size: 2.2rem;
+  margin-bottom: 2.5rem;
+  font-family: 'Helvetica Neue';
+  list-style-type: none;
+}
+.userInfo {
+  display: flex;
+  gap: 6.8rem;
+  align-items: center;
+  margin-top: 7.8rem;
+}
+
+.laptopImage {
+  width: 57.7rem;
+  height: 34.2rem;
+}
+.dataContainer {
+  display: flex;
+  justify-content: space-between;
+}

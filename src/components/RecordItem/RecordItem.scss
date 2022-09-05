@@ -1,0 +1,42 @@
+.item {
+  display: flex;
+  align-items: center;
+  gap: 2.8rem;
+  background-color: #eafaff;
+  border: 1px solid #aed1ea;
+  padding: 1.5rem 9rem 1.5rem 1.5rem;
+  border-radius: 2rem;
+}
+.userName {
+  font-size: 1.8rem;
+  font-family: 'Helvetica Neue';
+  font-weight: 600;
+  margin-top: -2rem;
+}
+.cpuName {
+  font-size: 1.8rem;
+  font-family: 'Helvetica Neue';
+  font-weight: 500;
+}
+.more {
+  font-size: 1.6rem;
+  font-family: 'Helvetica Neue';
+  margin-top: 1rem;
+  cursor: pointer;
+  text-decoration: underline;
+  color: #4386a9;
+}
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+  padding-top: 2rem;
+}
+.computerImgContainer {
+  width: 26.6rem;
+  height: 17.8rem;
+}
+.computerImgContainer img {
+  width: 100%;
+  height: 100%;
+}

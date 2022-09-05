@@ -1,0 +1,44 @@
+@font-face {
+  font-family: 'Helvetica Neue';
+  src: url(../../assets/HelveticaNeue.ttc);
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 10px;
+}
+body {
+  max-width: 100vw;
+  height: 100vw;
+}
+.listHeader {
+  text-align: center;
+  margin-top: 80px;
+  font-family: 'Helvetica Neue';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 34px;
+}
+.listContainer {
+  width: 1200px;
+  display: flex;
+  justify-content: space-between;
+  gap: 55px;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  margin-top: 100px;
+  padding-bottom: 168px;
+}
+.goback {
+  position: absolute;
+  width: 53px;
+  height: 53px;
+  cursor: pointer;
+  left: 70px;
+  top: 53px;
+  background-image: url('../../assets/goback.png');
+}
